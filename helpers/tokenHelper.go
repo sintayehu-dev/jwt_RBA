@@ -79,7 +79,7 @@ func UpdateAllTokens(signedToken string, signedRefreshToken string, userId strin
 		},
 		&opt,
 	)
-
+	defer cancel()
 	if err != nil {
 		log.Panic(err)
 		return
