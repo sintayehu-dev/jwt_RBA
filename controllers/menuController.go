@@ -14,7 +14,7 @@ import (
 func GetMenus() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if err := helpers.CheckUserType(c, "ADMIN"); err != nil {
-			c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+			c.JSON(http.StatusForbidden, gin.H{"error": "You don't have permission to view all menus"})
 			return
 		}
 
@@ -23,7 +23,7 @@ func GetMenus() gin.HandlerFunc {
 
 		var menus []models.Menu
 		if err := databases.DB.WithContext(ctx).Find(&menus).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "error fetching menus"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to retrieve menus. Please try again later."})
 			return
 		}
 
@@ -34,7 +34,7 @@ func GetMenus() gin.HandlerFunc {
 func GetMenu() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if err := helpers.CheckUserType(c, "ADMIN"); err != nil {
-			c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+			c.JSON(http.StatusForbidden, gin.H{"error": "You don't have permission to view this menu"})
 			return
 		}
 
@@ -45,8 +45,8 @@ func GetMenu() gin.HandlerFunc {
 		var menu models.Menu
 
 		if err := databases.DB.WithContext(ctx).Where("menu_id = ?", menuId).First(&menu).Error; err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "menu not found"})
-			return	
+			c.JSON(http.StatusNotFound, gin.H{"error": "The requested menu could not be found"})
+			return
 		}
 
 		c.JSON(http.StatusOK, menu)
@@ -56,7 +56,7 @@ func GetMenu() gin.HandlerFunc {
 func CreateMenu() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if err := helpers.CheckUserType(c, "ADMIN"); err != nil {
-			c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+			c.JSON(http.StatusForbidden, gin.H{"error": "You don't have permission to create menus"})
 			return
 		}
 
@@ -65,24 +65,23 @@ func CreateMenu() gin.HandlerFunc {
 
 		var menu models.Menu
 		if err := c.ShouldBindJSON(&menu); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid menu data provided. Please check your input."})
 			return
 		}
 
 		if err := databases.DB.WithContext(ctx).Create(&menu).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "error creating menu"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to create menu. Please try again later."})
 			return
 		}
 
 		c.JSON(http.StatusCreated, menu)
-
 	}
 }
 
 func UpdateMenu() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if err := helpers.CheckUserType(c, "ADMIN"); err != nil {
-			c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+			c.JSON(http.StatusForbidden, gin.H{"error": "You don't have permission to update menus"})
 			return
 		}
 
@@ -93,28 +92,28 @@ func UpdateMenu() gin.HandlerFunc {
 		var menu models.Menu
 
 		if err := databases.DB.WithContext(ctx).Where("menu_id = ?", menuId).First(&menu).Error; err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "menu not found"})
+			c.JSON(http.StatusNotFound, gin.H{"error": "The menu you're trying to update could not be found"})
 			return
 		}
 
 		var updateData models.Menu
 		if err := c.ShouldBindJSON(&updateData); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid menu data provided. Please check your input."})
 			return
 		}
 
 		if updateData.MenuID != menuId {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "menu_id in path and body must match"})					
+			c.JSON(http.StatusBadRequest, gin.H{"error": "The menu ID in the request does not match the URL"})
 			return
 		}
 
 		if err := databases.DB.WithContext(ctx).Where("menu_id = ?", menuId).Updates(&updateData).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "error updating menu"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to update menu. Please try again later."})
 			return
 		}
 
 		if err := databases.DB.WithContext(ctx).Where("menu_id = ?", menuId).First(&menu).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "error fetching updated menu"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Menu was updated but could not be retrieved"})
 			return
 		}
 
