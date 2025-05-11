@@ -3,20 +3,27 @@ package models
 import (
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"gorm.io/gorm"
 )
 
 type User struct {
-	ID            primitive.ObjectID `bson:"_id"`
-	First_Name    *string            `json:"first_name" validate:"required,min=2,max=100"`
-	Last_Name     *string            `json:"last_name" validate:"required,min=2,max=100"`
-	Password      *string            `json:"password" validate:"required,min=6"`
-	Email         *string            `json:"email" validate:"email,required"`
-	Phone         *string            `json:"phone" validate:"required,min=10,max=10"`
-	Token         *string            `json:"token"`
-	User_Type     *string            `json:"user_type" validate:"required,eq=ADMIN|eq=USER"`
-	Refresh_token *string            `json:"refresh_token"`
-	Created_at    time.Time          `json:"created_at"`
-	Updated_at    time.Time          `json:"updated_at"`
-	User_id       string             `json:"user_id"`
+	ID           uint      `gorm:"primaryKey" json:"id"`
+	FirstName    string    `gorm:"size:100;not null" json:"first_name" validate:"required,min=2,max=100"`
+	LastName     string    `gorm:"size:100;not null" json:"last_name" validate:"required,min=2,max=100"`
+	Password     string    `gorm:"size:100;not null" json:"password" validate:"required,min=6"`
+	Email        string    `gorm:"size:100;not null;uniqueIndex" json:"email" validate:"email,required"`
+	Phone        string    `gorm:"size:15;not null" json:"phone" validate:"required,min=10,max=15"`
+	Token        string    `gorm:"size:500" json:"token"`
+	UserType     string    `gorm:"size:20;not null;default:'USER'" json:"user_type" validate:"required,eq=ADMIN|eq=USER"`
+	RefreshToken string    `gorm:"size:500" json:"refresh_token"`
+	CreatedAt    time.Time `gorm:"autoCreateTime" json:"created_at"`
+	UpdatedAt    time.Time `gorm:"autoUpdateTime" json:"updated_at"`
+	UserID       string    `gorm:"size:100;uniqueIndex" json:"user_id"`
+}
+
+
+func (user *User) BeforeCreate(tx *gorm.DB) (err error) {
+	if user.UserID == "" {
+	}
+	return nil
 }
