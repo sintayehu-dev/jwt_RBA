@@ -11,7 +11,6 @@ import (
 )
 
 func main() {
-
 	db := databases.InitDB()
 	db.AutoMigrate(&models.User{})
 
@@ -26,12 +25,6 @@ func main() {
 	router.Use(middleware.Authenticate())
 
 	routes.UserRoutes(router)
-	routes.FoodRoutes(router)
-	routes.MenuRoutes(router)
-	routes.TableRoutes(router)
-	routes.OrderRoutes(router)
-	routes.OrderItemRoutes(router)
-	routes.InvoiceRoutes(router)
 
 	router.GET("/api-1", func(c *gin.Context) {
 		c.JSON(200, gin.H{"success": "Access granted for api-1"})

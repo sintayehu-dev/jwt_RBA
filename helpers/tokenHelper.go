@@ -67,18 +67,14 @@ func ValidateToken(signedToken string) (claims *SignedDetails, err error) {
 }
 
 func UpdateAllTokens(signedToken string, signedRefreshToken string, userId string) {
-	var user models.User
-	if err := databases.DB.Where("user_id = ?", userId).First(&user).Error; err != nil {
-		log.Printf("Error finding user: %v", err)
-		return
-	}
+	result := databases.DB.Model(&models.User{}).Where("user_id = ?", userId).Updates(map[string]interface{}{
+		"token":         signedToken,
+		"refresh_token": signedRefreshToken,
+		"updated_at":    time.Now(),
+	})
 
-	user.Token = signedToken
-	user.RefreshToken = signedRefreshToken
-	user.UpdatedAt = time.Now()
-
-	if err := databases.DB.Save(&user).Error; err != nil {
-		log.Printf("Error updating tokens: %v", err)
+	if result.Error != nil {
+		log.Panic(result.Error)
 		return
 	}
 }
