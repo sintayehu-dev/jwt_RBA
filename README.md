@@ -53,29 +53,7 @@ go mod download
 go run main.go
 ```
 
-The server will start at http://localhost:9000
 
-## 🔌 API Endpoints
-
-### Authentication
-| Method | Endpoint | Description | Access |
-|--------|----------|-------------|--------|
-| POST | `/users/signup` | Register a new user | Public |
-| POST | `/users/login` | Authenticate and get tokens | Public |
-
-### User Management
-| Method | Endpoint | Description | Access |
-|--------|----------|-------------|--------|
-| GET | `/users` | List all users | Admin |
-| GET | `/users/:user_id` | Get specific user | Admin/Self |
-
-### Test Endpoints
-| Method | Endpoint | Description | Access |
-|--------|----------|-------------|--------|
-| GET | `/api-1` | Test protected endpoint | Authenticated |
-| GET | `/api-2` | Test protected endpoint | Authenticated |
-
-## 🔧 Advanced Configuration
 
 ### Authentication Flow
 1. User registers with email/password
@@ -97,38 +75,6 @@ The server will start at http://localhost:9000
 ├── models/ - Data structures
 ├── routes/ - API endpoint definitions
 └── main.go - Application entry point
-```
-
-## 📝 API Request Examples
-
-### User Registration
-```bash
-curl -X POST http://localhost:9000/users/signup \
-  -H "Content-Type: application/json" \
-  -d '{
-    "first_name": "John",
-    "last_name": "Doe",
-    "email": "john@example.com",
-    "password": "secure_password",
-    "phone": "1234567890",
-    "user_type": "USER"
-  }'
-```
-
-### User Login
-```bash
-curl -X POST http://localhost:9000/users/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "john@example.com",
-    "password": "secure_password"
-  }'
-```
-
-### Accessing Protected Route
-```bash
-curl -X GET http://localhost:9000/users \
-  -H "Authorization: Bearer your_jwt_token_here"
 ```
 
 ## 🤝 Contributing
